@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpeakFlow - English Practice</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SpeakFlow</h1>
+            <p class="subtitle" id="header-subtitle">Pratique inglês com IA</p>
+        </header>
+
+        <!-- Configuração inicial -->
+        <div id="setup-screen" class="screen active">
+            <div class="setup-card">
+                <h2>Configurações</h2>
+                
+                <div class="form-group">
+                    <label for="practice-mode">Modo de Prática</label>
+                    <select id="practice-mode">
+                        <option value="dialog">Diálogo Scriptado</option>
+                        <option value="freeChat">Conversa Livre (Tempo Real)</option>
+                    </select>
+                    <small id="mode-description" style="color: #aaa;">Diálogos pré-gerados para ler em voz alta</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="api-provider">Provedor de IA (Grátis)</label>
+                    <select id="api-provider">
+                        <option value="groq">Groq (Recomendado - Mais rápido)</option>
+                        <option value="gemini">Google Gemini</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="api-key">API Key (Grátis)</label>
+                    <input type="password" id="api-key" placeholder="">
+                    <small id="api-link">Obtenha grátis em <a href="https://console.groq.com/keys" target="_blank" style="color: #00d9ff;">console.groq.com</a></small>
+                </div>
+
+                <div class="form-group" id="topic-group">
+                    <label for="topic">Tópico da Conversa</label>
+                    <select id="topic">
+                        <option value="daily">Conversas do Dia a Dia</option>
+                        <option value="travel">Viagem e Turismo</option>
+                        <option value="work">Trabalho e Negócios</option>
+                        <option value="restaurant">Restaurante e Comida</option>
+                        <option value="shopping">Compras</option>
+                        <option value="health">Saúde e Médico</option>
+                        <option value="tech">Tecnologia</option>
+                        <option value="friendship">Amizade e Social</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="level-group">
+                    <label for="level">Nível</label>
+                    <select id="level">
+                        <option value="beginner">Iniciante</option>
+                        <option value="intermediate">Intermediário</option>
+                        <option value="advanced">Avançado</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="autospeak-group">
+                    <label>
+                        <input type="checkbox" id="auto-speak" checked>
+                        Falar automaticamente (Text-to-Speech)
+                    </label>
+                </div>
+
+                <div class="form-group" id="persona-group" style="display: none;">
+                    <label for="ai-persona">Persona do Parceiro</label>
+                    <select id="ai-persona">
+                        <option value="friendly">Amigo(a) Casual</option>
+                        <option value="teacher">Professor(a) de Inglês</option>
+                        <option value="interviewer">Entrevistador(a)</option>
+                        <option value="tourist">Turista</option>
+                        <option value="coworker">Colega de Trabalho</option>
+                    </select>
+                </div>
+
+                <button id="start-btn" class="btn-primary">Começar Prática</button>
+            </div>
+        </div>
+
+        <!-- Tela de Conversa Livre -->
+        <div id="chat-screen" class="screen">
+            <div class="chat-container">
+                <!-- Info da conversa -->
+                <div class="chat-info-bar">
+                    <div class="chat-persona-info">
+                        <span class="chat-persona-avatar"></span>
+                        <span class="chat-persona-name" id="chat-persona-name">AI Partner</span>
+                        <span class="chat-status" id="chat-status">Online</span>
+                    </div>
+                    <div class="chat-topic-badge" id="chat-topic-badge">Daily</div>
+                </div>
+
+                <!-- Área de mensagens -->
+                <div class="chat-messages" id="chat-messages">
+                    <!-- Mensagens serão inseridas aqui dinamicamente -->
+                </div>
+
+                <!-- Sugestões de resposta -->
+                <div class="suggestions-container hidden" id="suggestions-container">
+                    <!-- Sugestões serão inseridas dinamicamente -->
+                </div>
+
+                <!-- Feedback de pronúncia/gramática -->
+                <div class="chat-feedback hidden" id="chat-feedback">
+                    <div class="feedback-header">
+                        <span>Feedback</span>
+                        <button class="feedback-close" id="feedback-close">✕</button>
+                    </div>
+                    <div class="feedback-content" id="feedback-content"></div>
+                </div>
+
+                <!-- Área de input por voz -->
+                <div class="chat-input-area">
+                    <div class="speech-status" id="speech-status">
+                        <span class="status-dot"></span>
+                        <span id="speech-status-text">Pressione o microfone para falar</span>
+                    </div>
+                    <div class="chat-transcript" id="chat-transcript"></div>
+                    <div class="chat-actions">
+                        <button id="mic-btn" class="mic-btn" title="Pressione para falar">
+                            <span class="mic-icon">&#9679;</span>
+                            <span class="mic-label">Falar</span>
+                        </button>
+                        <button id="send-text-btn" class="btn-secondary" title="Digitar mensagem">Digitar</button>
+                        <button id="chat-config-btn" class="btn-secondary" title="Configurações">Config.</button>
+                        <button id="end-chat-btn" class="btn-secondary btn-danger" title="Encerrar conversa">Sair</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal para digitar texto -->
+            <div class="text-input-modal hidden" id="text-input-modal">
+                <div class="text-input-card">
+                    <h3>Digite sua mensagem em inglês</h3>
+                    <textarea id="text-input-field" placeholder="Type your message in English..." rows="3"></textarea>
+                    <div class="text-input-actions">
+                        <button id="text-input-send" class="btn-primary" style="margin-top: 0;">Enviar</button>
+                        <button id="text-input-cancel" class="btn-secondary">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de diálogo -->
+        <div id="dialog-screen" class="screen">
+            <div class="dialog-container">
+                <!-- Contexto da situação -->
+                <div class="context-box">
+                    <span class="label">Situação:</span>
+                    <span id="context-text">Carregando...</span>
+                </div>
+
+                <!-- O que o parceiro diz -->
+                <div class="dialog-box partner-box">
+                    <div class="avatar">P</div>
+                    <div class="speech-content">
+                        <span class="speaker-label">Partner says:</span>
+                        <p id="partner-text" class="speech-text">...</p>
+                        <p id="partner-translation" class="translation-inline">...</p>
+                        <button class="speak-btn" onclick="speakText('partner')">Ouvir</button>
+                    </div>
+                </div>
+
+                <!-- O que você deve responder -->
+                <div class="dialog-box user-box">
+                    <div class="avatar">V</div>
+                    <div class="speech-content">
+                        <span class="speaker-label">You should say:</span>
+                        <p id="user-text" class="speech-text">...</p>
+                        <p id="user-translation" class="translation-inline">...</p>
+                        <button class="speak-btn" onclick="speakText('user')">Ouvir</button>
+                    </div>
+                </div>
+
+                <!-- Instruções -->
+                <div class="instruction-box">
+                    <p><strong>Leia a frase em voz alta</strong>, depois pressione <kbd>ESPAÇO</kbd> para continuar</p>
+                </div>
+
+                <!-- Progresso -->
+                <div class="progress-bar">
+                    <div id="progress-fill"></div>
+                </div>
+                <p class="progress-text">Diálogo <span id="current-step">1</span> de <span id="total-steps">10</span></p>
+            </div>
+
+            <!-- Controles -->
+            <div class="controls">
+                <button id="back-btn" class="btn-secondary">Voltar</button>
+                <button id="new-dialog-btn" class="btn-secondary">Novo Diálogo</button>
+                <button id="config-btn" class="btn-secondary">Configurações</button>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Gerando diálogo com IA...</p>
+        </div>
+    </div>
+
+    <script src="chat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
