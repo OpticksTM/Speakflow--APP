@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./LOGO SpeakFlow.jpg" alt="SpeakFlow Logo" width="400">
+</p>
+
 # SpeakFlow - English Dialog Practice
 
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
