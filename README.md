@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./LOGO SpeakFlow.jpg" alt="SpeakFlow Logo" width="400">
+  <img src="./LOGO SpeakFlow.jpg" alt="SpeakFlow Logo" style="width: 100%; height: auto;">
 </p>
 
 # SpeakFlow - English Dialog Practice
