@@ -1,96 +1,51 @@
 # SpeakFlow - English Dialog Practice
 
-Um aplicativo simples e eficaz para praticar conversacao em ingles, onde o sistema gera dialogos e voce pratica falando em voz alta.
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Groq](https://img.shields.io/badge/Groq-F55036?style=for-the-badge&logo=groq&logoColor=white)](https://groq.com/)
+[![Google Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev/)
+
+Um aplicativo simples e eficaz para praticar conversação em inglês, onde o sistema gera diálogos e você pratica falando em voz alta.
+
+---
 
 ## Funcionalidades
 
-- **Dialogos gerados por IA** - Usa Groq (Llama 3.3) ou Google Gemini para criar conversas naturais e contextualizadas
-- **Interface minimalista** - Foco total no aprendizado, sem distracoes
-- **Controle por ESPACO** - Pressione a barra de espaco para avancar no dialogo
-- **Text-to-Speech** - Ouca a pronuncia correta das frases em ingles
-- **Traducao inline** - Veja a traducao em portugues diretamente em cada frase
-- **Multiplos topicos** - Escolha entre viagem, trabalho, restaurante, etc.
-- **Niveis de dificuldade** - Iniciante, intermediario ou avancado
-- **APIs gratuitas** - Suporte a Groq e Google Gemini (ambas gratuitas)
+* **Diálogos gerados por IA:** Usa Groq (Llama 3.3) ou Google Gemini para criar conversas naturais e contextualizadas.
+* **Interface minimalista:** Foco total no aprendizado, sem distrações.
+* **Controle por ESPAÇO:** Pressione a barra de espaço para avançar no diálogo.
+* **Text-to-Speech:** Ouça a pronúncia correta das frases em inglês.
+* **Tradução inline:** Veja a tradução em português diretamente em cada frase.
+* **Múltiplos tópicos:** Escolha entre viagem, trabalho, restaurante, etc.
+* **Níveis de dificuldade:** Iniciante, intermediário ou avançado.
+* **APIs gratuitas:** Suporte a Groq e Google Gemini (ambas gratuitas).
+
+---
 
 ## Como Usar
 
 ### 1. Obter API Key (Gratuita)
 
-**Opcao A - Groq (Recomendado):**
-1. Acesse [console.groq.com/keys](https://console.groq.com/keys)
-2. Crie uma conta (pode usar Google/GitHub)
-3. Clique em "Create API Key"
-4. Copie a chave (comeca com `gsk_`)
+* **Opção A - Groq (Recomendado):**
+  * Acesse `console.groq.com/keys`
+  * Crie uma conta (pode usar Google/GitHub)
+  * Clique em "Create API Key"
+  * Copie a chave (começa com `gsk_`)
 
-**Opcao B - Google Gemini:**
-1. Acesse [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
-2. Faca login com sua conta Google
-3. Clique em "Create API Key"
-4. Copie a chave (comeca com `AIza`)
+* **Opção B - Google Gemini:**
+  * Acesse `aistudio.google.com/app/apikey`
+  * Faça login com sua conta Google
+  * Clique em "Create API Key"
+  * Copie a chave (começa com `AIza`)
 
 ### 2. Executar o App
 
-**Opcao A - Abrir diretamente:**
-- De duplo clique no arquivo `index.html`
+* **Opção A - Abrir diretamente:** Dê duplo clique no arquivo `index.html`.
+* **Opção B - Com servidor local (recomendado):**
+  ```bash
+  # Com Python
+  python -m http.server 8080
 
-**Opcao B - Com servidor local (recomendado):**
-```bash
-# Com Python
-python -m http.server 8080
-
-# Com Node.js
-npx serve .
-
-# Com VS Code
-# Use a extensao "Live Server"
-```
-
-### 3. Configurar e Praticar
-
-1. Selecione o provedor de IA (Groq ou Gemini)
-2. Cole sua API Key
-3. Escolha o topico de conversacao
-4. Selecione seu nivel
-5. Clique em "Comecar Pratica"
-6. Leia cada frase em voz alta antes de pressionar ESPACO
-
-## Dicas de Estudo
-
-1. **Fale em voz alta** - Nao apenas leia mentalmente
-2. **Repita varias vezes** - Use o botao de audio para ouvir e repetir
-3. **Pratique diariamente** - 15 minutos por dia e melhor que 2 horas uma vez por semana
-4. **Grave-se** - Compare sua pronuncia com o audio
-
-## Tecnologias
-
-- HTML5, CSS3, JavaScript (Vanilla)
-- Groq API (Llama 3.3 70B) - Gratuita
-- Google Gemini API - Gratuita
-- Web Speech API (Text-to-Speech nativo do navegador)
-
-## Estrutura
-
-```
-SpeakFlow/
-  index.html      # Pagina principal
-  style.css       # Estilos visuais
-  app.js          # Logica do aplicativo
-  README.md       # Este arquivo
-```
-
-## Seguranca
-
-- Sua API Key e armazenada apenas localmente no navegador (localStorage)
-- Nenhum dado e enviado para servidores externos alem do provedor de IA escolhido
-- Voce pode limpar seus dados a qualquer momento limpando o localStorage
-
-## Custos
-
-O app usa APIs gratuitas:
-- **Groq**: Gratuito (14.400 requisicoes/dia)
-- **Google Gemini**: Gratuito (60 requisicoes/minuto)
-
----
-
-Bons estudos!
+  # Com Node.js
+  npx serve .
