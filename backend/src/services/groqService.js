@@ -25,4 +25,4 @@ async function getChatCompletion(userMessage) {
     }
 }
 
-module.exports = { getChatCompletion };
+module.exports = { getGroqChatCompletion: getChatCompletion };
