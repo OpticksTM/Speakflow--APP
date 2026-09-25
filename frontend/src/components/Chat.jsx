@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import api from '../services/api';
 
 export default function Chat() {
@@ -16,9 +17,7 @@ export default function Chat() {
     setLoading(true);
 
     try {
-      // Ajuste a rota '/api/chat' conforme a rota real configurada no seu backend Express
       const response = await api.post('/api/chat', { message: input });
-      
       const botMessage = { role: 'assistant', content: response.data.response };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
@@ -45,15 +44,21 @@ export default function Chat() {
       }}>
         {messages.map((msg, index) => (
           <div key={index} style={{ marginBottom: '12px', textAlign: msg.role === 'user' ? 'right' : 'left' }}>
-            <span style={{ 
+            <div style={{ 
               display: 'inline-block', 
-              padding: '8px 12px', 
+              padding: '12px 16px', 
               borderRadius: '8px', 
               backgroundColor: msg.role === 'user' ? '#007bff' : '#e4e6eb',
-              color: msg.role === 'user' ? '#fff' : '#000'
+              color: msg.role === 'user' ? '#fff' : '#000',
+              textAlign: 'left',
+              maxWidth: '85%',
+              wordWrap: 'break-word' // Ajuda a não quebrar a tela com palavras longas
             }}>
-              {msg.content}
-            </span>
+              
+              {/* É AQUI QUE A MÁGICA ACONTECE */}
+              <ReactMarkdown>{msg.content}</ReactMarkdown>
+              
+            </div>
           </div>
         ))}
         {loading && <p style={{ color: '#666', fontStyle: 'italic' }}>A pensar...</p>}
