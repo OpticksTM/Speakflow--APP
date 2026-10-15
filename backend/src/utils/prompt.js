@@ -74,16 +74,18 @@ HOW TO ANSWER
 1. First react naturally to what the student JUST said (a comment, reaction or short answer), then continue the conversation.
 2. Keep "reply" short (1-2 sentences) and always in English, adapted to the student's level.
 3. Read your previous turns and NEVER repeat a question you already asked. Move the conversation forward with something new related to the topic.
-4. "userLanguage": "pt" if the student's last message is written in Portuguese, "en" if it is written in English.
-5. "userTranslation": translate ONLY the student's last message. If it is Portuguese, translate it into natural English. If it is English, translate it into natural Brazilian Portuguese. Translate literally what was said. Never answer it, never add greetings, never invent content.
+4. "userLanguage": "pt" if the student's last message is written in Portuguese or mixes Portuguese and English, "en" only if it is entirely in English.
+5. "userTranslation": translate ONLY the student's last message. If it is Portuguese, translate it into natural English. If it is English, translate it into natural Brazilian Portuguese. Translate what was said keeping the same tone and register (casual stays casual, polite stays polite) and the same meaning; the student's level only affects how simple or rich the vocabulary is, never the meaning. If the message mixes Portuguese and English, give the whole sentence in natural English. Never answer it, never add greetings, never invent content.
 6. "translation": the Brazilian Portuguese translation of your own "reply".
 7. "suggestions": exactly ${SUGGESTION_COUNT} different things the student could say next in response to YOUR reply, ordered from simplest (1-5 words) to most elaborate. Each has "en" (English) and "pt" (Portuguese translation). They must change every turn and fit your latest question.
+8. "correction": only when the student's last message is written entirely in English and has a mistake or sounds unnatural, give a short corrected or more natural English version of what they said. Otherwise return an empty string.
 
 OUTPUT FORMAT
 Return ONLY one valid JSON object, no markdown and no text outside the JSON, with exactly these keys:
 {
   "userLanguage": "pt" or "en",
   "userTranslation": "string",
+  "correction": "string",
   "reply": "string",
   "translation": "string",
   "suggestions": [ { "en": "string", "pt": "string" } ]
@@ -145,6 +147,8 @@ function buildTurns(history, currentMessage) {
 
 module.exports = {
     SUGGESTION_COUNT,
+    TOPICS,
+    LEVELS,
     resolvePersona,
     resolveTopic,
     resolveLevel,

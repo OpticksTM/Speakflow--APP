@@ -2,6 +2,7 @@
 const Groq = require('groq-sdk');
 const { buildSystemInstruction, buildTurns } = require('../utils/prompt');
 const { parseAiJson, normalizeAiResponse } = require('../utils/aiJson');
+const { buildTranslateInstruction, normalizeTranslation } = require('../utils/translate');
 
 // llama-3.3-70b-specdec foi descontinuado; este é o modelo que o app vanilla já usava.
 // Para trocar sem mexer no código, defina GROQ_MODEL no .env.
@@ -18,29 +19,24 @@ function getClient() {
     return client;
 }
 
-async function getGroqChatCompletion(userMessage, context = {}) {
+// Chamada genérica com uma nova tentativa quando o JSON vem malformado
+async function runJsonCompletion(messages, temperature, parse) {
     const groq = getClient();
-
-    // Histórico real em messages (user/assistant) + a mensagem atual no fim
-    const messages = [
-        { role: 'system', content: buildSystemInstruction(context) },
-        ...buildTurns(context.history, userMessage)
-    ];
-
     let lastError = null;
+
     for (let attempt = 1; attempt <= 2; attempt++) {
         try {
             const response = await groq.chat.completions.create({
                 model: MODEL,
                 messages,
-                temperature: 0.9,
+                temperature,
                 response_format: { type: 'json_object' }
             });
 
             const rawText = response.choices && response.choices[0] && response.choices[0].message
                 ? response.choices[0].message.content
                 : '';
-            return normalizeAiResponse(parseAiJson(rawText), userMessage);
+            return parse(rawText);
         } catch (error) {
             lastError = error;
             if (!error.isFormatError) break;
@@ -51,4 +47,25 @@ async function getGroqChatCompletion(userMessage, context = {}) {
     throw lastError;
 }
 
-module.exports = { getGroqChatCompletion };
+// ---------- Chat livre ----------
+async function getGroqChatCompletion(userMessage, context = {}) {
+    // Histórico real em messages (user/assistant) + a mensagem atual no fim
+    const messages = [
+        { role: 'system', content: buildSystemInstruction(context) },
+        ...buildTurns(context.history, userMessage)
+    ];
+
+    return runJsonCompletion(messages, 0.9, raw => normalizeAiResponse(parseAiJson(raw), userMessage));
+}
+
+// ---------- Frase rápida (português -> inglês) ----------
+async function getGroqTranslation(text, context = {}) {
+    const messages = [
+        { role: 'system', content: buildTranslateInstruction(context) },
+        { role: 'user', content: text }
+    ];
+
+    return runJsonCompletion(messages, 0.3, raw => normalizeTranslation(parseAiJson(raw), text));
+}
+
+module.exports = { getGroqChatCompletion, getGroqTranslation };

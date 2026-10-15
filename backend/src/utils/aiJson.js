@@ -101,13 +101,19 @@ function normalizeAiResponse(parsed, userMessage) {
     const modelLang = str(data.userLanguage).toLowerCase();
     const userLanguage = modelLang === 'pt' || modelLang === 'en' ? modelLang : detectLanguage(userMessage);
 
+    // Correção só faz sentido para quem falou inglês, e só se for diferente do que foi dito
+    const sameText = (a, b) => String(a).toLowerCase().replace(/[^a-z0-9]/g, '') === String(b).toLowerCase().replace(/[^a-z0-9]/g, '');
+    let correction = str(data.correction);
+    if (userLanguage !== 'en' || sameText(correction, userMessage)) correction = '';
+
     return {
         userLanguage,
         userTranslation: str(data.userTranslation),
+        correction,
         reply,
         translation: str(data.translation),
         suggestions: normalizeSuggestions(data.suggestions)
     };
 }
 
-module.exports = { parseAiJson, normalizeAiResponse, detectLanguage };
+module.exports = { parseAiJson, normalizeAiResponse, detectLanguage, formatError };

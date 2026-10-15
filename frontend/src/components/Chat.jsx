@@ -32,9 +32,10 @@ const CHAT_STYLES = `
 
 const FONT_STACK = "Inter, Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 
-const GRADIENT_EMERALD = 'linear-gradient(135deg, #059669, #14b8a6)';
+const GRADIENT_PRIMARY = 'linear-gradient(135deg, #1FA9E0, #3CCFC0)'; // ciano -> verde-água (a onda e o ponto do logo)
+const GRADIENT_BUBBLE = 'linear-gradient(135deg, #1B5FA8, #1384BE)'; // azul-marinho -> azul (balão de quem fala, texto branco legível)
 const GRADIENT_ROSE = 'linear-gradient(135deg, #e11d48, #f43f5e)';
-const GRADIENT_VIOLET = 'linear-gradient(135deg, #6366f1, #8b5cf6)';
+const GRADIENT_ACCENT = 'linear-gradient(135deg, #1D6FD0, #2DC5F4)'; // azul -> ciano (botões e seleções)
 
 /* ------------------------------------------------------------------ */
 /* Ícones SVG minimalistas (sem biblioteca externa)                    */
@@ -143,7 +144,7 @@ const LEVEL_LABELS = {
 };
 
 const LEVEL_BADGE_CLASSES = {
-    'iniciante': 'text-emerald-300 bg-emerald-400/10 border-emerald-400/20',
+    'iniciante': 'text-cyan-300 bg-cyan-400/10 border-cyan-400/20',
     'intermediário': 'text-amber-300 bg-amber-400/10 border-amber-400/20',
     'intermediario': 'text-amber-300 bg-amber-400/10 border-amber-400/20',
     'avançado': 'text-rose-300 bg-rose-400/10 border-rose-400/20',
@@ -158,7 +159,7 @@ function Avatar({ initial, size = 'md' }) {
     return (
         <div
             className={`flex shrink-0 items-center justify-center rounded-full border border-white/15 font-semibold text-white shadow-md ${sizeClasses}`}
-            style={{ background: GRADIENT_VIOLET }}
+            style={{ background: GRADIENT_ACCENT }}
         >
             {initial}
         </div>
@@ -182,7 +183,7 @@ function ActionButton({ onClick, label, children }) {
             onClick={onClick}
             title={label}
             aria-label={label}
-            className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition-colors duration-200 hover:bg-white/15 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60"
+            className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition-colors duration-200 hover:bg-white/15 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60"
         >
             {children}
         </button>
@@ -192,7 +193,7 @@ function ActionButton({ onClick, label, children }) {
 /* ------------------------------------------------------------------ */
 /* Componente principal                                                */
 /* ------------------------------------------------------------------ */
-export default function Chat({ appState, onExit }) {
+export default function Chat({ appState, onExit, onSwitchMode }) {
     const {
         messages,
         isRecording,
@@ -241,7 +242,7 @@ export default function Chat({ appState, onExit }) {
             <div
                 aria-hidden="true"
                 className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
-                style={{ background: 'linear-gradient(135deg, #020617 0%, #0b1020 45%, #18181b 100%)' }}
+                style={{ background: 'linear-gradient(135deg, #040B18 0%, #0A1B33 50%, #0E2644 100%)' }}
             >
                 <div
                     className="absolute inset-0"
@@ -254,11 +255,11 @@ export default function Chat({ appState, onExit }) {
                 />
                 <div
                     className="absolute -left-32 -top-32 h-[28rem] w-[28rem] rounded-full"
-                    style={{ background: 'radial-gradient(circle, rgba(16, 185, 129, 0.18), transparent 65%)' }}
+                    style={{ background: 'radial-gradient(circle, rgba(45, 197, 244, 0.18), transparent 65%)' }}
                 />
                 <div
                     className="absolute -bottom-40 -right-32 h-[32rem] w-[32rem] rounded-full"
-                    style={{ background: 'radial-gradient(circle, rgba(139, 92, 246, 0.18), transparent 65%)' }}
+                    style={{ background: 'radial-gradient(circle, rgba(44, 140, 220, 0.18), transparent 65%)' }}
                 />
             </div>
 
@@ -279,14 +280,14 @@ export default function Chat({ appState, onExit }) {
                     <div className="flex items-center gap-3.5">
                         <div className="relative">
                             <Avatar initial={persona.initial} size="lg" />
-                            <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-slate-900 bg-emerald-400" />
+                            <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-slate-900 bg-cyan-400" />
                         </div>
                         <div className="leading-tight">
                             <h2 className="text-[15px] font-semibold tracking-tight text-white">{persona.name}</h2>
                             <p className="mt-0.5 text-xs text-slate-400">{persona.role}</p>
                         </div>
                         <div className="ml-1 hidden items-center gap-2 sm:flex">
-                            <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
+                            <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cyan-300">
                                 {topicLabel}
                             </span>
                             <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${levelBadgeClasses}`}>
@@ -294,14 +295,26 @@ export default function Chat({ appState, onExit }) {
                             </span>
                         </div>
                     </div>
-                    {onExit && (
-                        <button
-                            onClick={onExit}
-                            className="cursor-pointer rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-slate-300 transition-colors duration-200 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60"
-                        >
-                            Sair
-                        </button>
-                    )}
+                    <div className="flex items-center gap-2">
+                        {onSwitchMode && (
+                            <button
+                                type="button"
+                                onClick={onSwitchMode}
+                                className="cursor-pointer rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-slate-300 transition-colors duration-200 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60"
+                            >
+                                Frase rápida
+                            </button>
+                        )}
+                        {onExit && (
+                            <button
+                                type="button"
+                                onClick={onExit}
+                                className="cursor-pointer rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-slate-300 transition-colors duration-200 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60"
+                            >
+                                Sair
+                            </button>
+                        )}
+                    </div>
                 </header>
 
                 {/* Mensagens */}
@@ -323,16 +336,16 @@ export default function Chat({ appState, onExit }) {
                                     <div
                                         className={`rounded-2xl border px-4 py-3 transition-all duration-200 ${
                                             isUser
-                                                ? 'border-white/15 shadow-lg shadow-emerald-950/40 hover:shadow-emerald-900/50'
+                                                ? 'border-white/15 shadow-lg shadow-cyan-950/40 hover:shadow-cyan-900/50'
                                                 : 'border-white/10 bg-white/5 hover:bg-white/[0.08]'
                                         } ${isError ? 'opacity-70' : ''}`}
-                                        style={isUser ? { background: GRADIENT_EMERALD } : undefined}
+                                        style={isUser ? { background: GRADIENT_BUBBLE } : undefined}
                                     >
                                         <p className="text-[15px] font-medium leading-relaxed text-white">{msg.text}</p>
 
                                         {isPending && (
                                             <div className="mt-3 border-t border-white/20 pt-3">
-                                                <TypingDots tone="text-emerald-100" />
+                                                <TypingDots tone="text-cyan-100" />
                                             </div>
                                         )}
 
@@ -345,7 +358,7 @@ export default function Chat({ appState, onExit }) {
                                         {!isPending && !isError && msg.translation && (
                                             <p
                                                 className={`mt-3 border-t pt-3 text-sm italic leading-relaxed ${
-                                                    isUser ? 'border-white/20 text-emerald-50/85' : 'border-white/10 text-slate-400'
+                                                    isUser ? 'border-white/20 text-cyan-50/85' : 'border-white/10 text-slate-400'
                                                 }`}
                                             >
                                                 {msg.translation}
@@ -408,8 +421,8 @@ export default function Chat({ appState, onExit }) {
 
                 {/* Status do microfone */}
                 {speechStatus && (
-                    <div className="flex items-center justify-center gap-2 border-t border-emerald-400/10 bg-emerald-400/[0.06] py-2 text-xs text-emerald-300">
-                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                    <div className="flex items-center justify-center gap-2 border-t border-cyan-400/10 bg-cyan-400/[0.06] py-2 text-xs text-cyan-300">
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-400" />
                         {speechStatus}
                     </div>
                 )}
@@ -419,13 +432,13 @@ export default function Chat({ appState, onExit }) {
                     <div className="border-t border-white/10 bg-black/10 px-5 pb-2 pt-3.5 sm:px-8">
                         <div className="mb-2.5 flex items-center justify-between text-xs text-slate-400">
                             <span className="inline-flex items-center gap-1.5">
-                                <IconSpark className="h-3.5 w-3.5 text-violet-300" />
+                                <IconSpark className="h-3.5 w-3.5 text-sky-300" />
                                 Sugestões do que você pode falar
                             </span>
                             <button
                                 type="button"
                                 onClick={() => setShowSuggestions(!showSuggestions)}
-                                className="cursor-pointer text-violet-300 transition-colors hover:text-violet-200"
+                                className="cursor-pointer text-sky-300 transition-colors hover:text-sky-200"
                             >
                                 {showSuggestions ? 'Ocultar' : 'Mostrar'}
                             </button>
@@ -437,12 +450,12 @@ export default function Chat({ appState, onExit }) {
                                         key={`${lastAiMessage.id}-${idx}`}
                                         type="button"
                                         onClick={() => sendMessage(sug.en || sug.pt)}
-                                        className="group relative min-w-[220px] max-w-[300px] shrink-0 cursor-pointer rounded-xl border border-white/10 bg-white/[0.04] p-3.5 text-left transition-all duration-200 hover:-translate-y-1 hover:border-violet-400/40 hover:bg-white/[0.07] hover:shadow-[0_12px_30px_-12px_rgba(139,92,246,0.55)] focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60"
+                                        className="group relative min-w-[220px] max-w-[300px] shrink-0 cursor-pointer rounded-xl border border-white/10 bg-white/[0.04] p-3.5 text-left transition-all duration-200 hover:-translate-y-1 hover:border-sky-400/40 hover:bg-white/[0.07] hover:shadow-[0_12px_30px_-12px_rgba(44,140,220,0.55)] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60"
                                     >
                                         <span
                                             aria-hidden="true"
                                             className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                                            style={{ background: 'radial-gradient(120% 120% at 0% 0%, rgba(139, 92, 246, 0.2), transparent 60%)' }}
+                                            style={{ background: 'radial-gradient(120% 120% at 0% 0%, rgba(44, 140, 220, 0.2), transparent 60%)' }}
                                         />
                                         <span className="relative block text-[13px] font-semibold leading-snug text-slate-100">{sug.en}</span>
                                         {sug.pt && (
@@ -468,10 +481,10 @@ export default function Chat({ appState, onExit }) {
                                 onClick={isRecording ? stopListening : startListening}
                                 disabled={isThinking && !isRecording}
                                 aria-label={isRecording ? 'Parar gravação' : 'Gravar'}
-                                className={`relative inline-flex h-11 cursor-pointer items-center gap-2 rounded-full border border-white/15 px-5 text-xs font-semibold uppercase tracking-wide text-white transition-all duration-200 hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60 disabled:cursor-not-allowed disabled:opacity-50 ${
-                                    isRecording ? 'sf-glow' : 'shadow-lg shadow-emerald-950/40'
+                                className={`relative inline-flex h-11 cursor-pointer items-center gap-2 rounded-full border border-white/15 px-5 text-xs font-semibold uppercase tracking-wide text-white transition-all duration-200 hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60 disabled:cursor-not-allowed disabled:opacity-50 ${
+                                    isRecording ? 'sf-glow' : 'shadow-lg shadow-cyan-950/40'
                                 }`}
-                                style={{ background: isRecording ? GRADIENT_ROSE : GRADIENT_EMERALD }}
+                                style={{ background: isRecording ? GRADIENT_ROSE : GRADIENT_PRIMARY }}
                             >
                                 {isRecording ? (
                                     <span className="flex h-4 items-center gap-[3px]" aria-hidden="true">
@@ -500,7 +513,7 @@ export default function Chat({ appState, onExit }) {
                                 className={`cursor-pointer rounded-full px-3 py-2 transition-all duration-200 disabled:cursor-not-allowed ${
                                     recognitionLang === 'pt-BR' ? 'text-white shadow' : 'text-slate-400 hover:text-slate-200'
                                 }`}
-                                style={recognitionLang === 'pt-BR' ? { background: GRADIENT_VIOLET } : undefined}
+                                style={recognitionLang === 'pt-BR' ? { background: GRADIENT_ACCENT } : undefined}
                             >
                                 PT
                             </button>
@@ -512,7 +525,7 @@ export default function Chat({ appState, onExit }) {
                                 className={`cursor-pointer rounded-full px-3 py-2 transition-all duration-200 disabled:cursor-not-allowed ${
                                     recognitionLang === 'en-US' ? 'text-white shadow' : 'text-slate-400 hover:text-slate-200'
                                 }`}
-                                style={recognitionLang === 'en-US' ? { background: GRADIENT_VIOLET } : undefined}
+                                style={recognitionLang === 'en-US' ? { background: GRADIENT_ACCENT } : undefined}
                             >
                                 EN
                             </button>
@@ -521,7 +534,7 @@ export default function Chat({ appState, onExit }) {
                         {/* Campo de texto com anel de foco animado */}
                         <form
                             onSubmit={handleSend}
-                            className="flex flex-1 items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1.5 pl-5 pr-1.5 transition-all duration-200 focus-within:border-violet-400/60 focus-within:bg-white/[0.07] focus-within:ring-2 focus-within:ring-violet-500/40"
+                            className="flex flex-1 items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1.5 pl-5 pr-1.5 transition-all duration-200 focus-within:border-sky-400/60 focus-within:bg-white/[0.07] focus-within:ring-2 focus-within:ring-sky-500/40"
                         >
                             <input
                                 type="text"
@@ -534,8 +547,8 @@ export default function Chat({ appState, onExit }) {
                                 type="submit"
                                 disabled={!inputText.trim() || isThinking}
                                 aria-label="Enviar"
-                                className="inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-white shadow-md transition-all duration-200 hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-300/70 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:brightness-100"
-                                style={{ background: GRADIENT_VIOLET }}
+                                className="inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-white shadow-md transition-all duration-200 hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-300/70 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:brightness-100"
+                                style={{ background: GRADIENT_ACCENT }}
                             >
                                 <IconSend className="h-4 w-4" />
                             </button>

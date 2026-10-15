@@ -2,6 +2,7 @@
 const { GoogleGenAI } = require('@google/genai');
 const { buildSystemInstruction, buildTurns } = require('../utils/prompt');
 const { parseAiJson, normalizeAiResponse } = require('../utils/aiJson');
+const { buildTranslateInstruction, normalizeTranslation } = require('../utils/translate');
 
 // gemini-1.5-flash, 2.0-flash e 2.5-flash foram desligados pelo Google (retornam 404).
 // O Flash-Lite é rápido, barato e feito para chatbots, e costuma sofrer menos com erro 503 de alta demanda.
@@ -38,7 +39,8 @@ function isTransientError(error) {
         /high demand|overloaded|UNAVAILABLE|RESOURCE_EXHAUSTED|try again later/i.test(msg);
 }
 
-async function callModel(model, contents, systemInstruction, userMessage) {
+// Uma chamada ao modelo; "parse" transforma o texto bruto no objeto final (chat ou tradução)
+async function callModel(model, contents, systemInstruction, temperature, parse) {
     const ai = getClient();
     const response = await ai.models.generateContent({
         model,
@@ -46,22 +48,22 @@ async function callModel(model, contents, systemInstruction, userMessage) {
         config: {
             systemInstruction,
             responseMimeType: 'application/json',
-            temperature: 0.9
+            temperature
         }
     });
 
     // Na SDK nova, response.text é uma propriedade (getter), não uma função
     const rawText = typeof response.text === 'function' ? response.text() : response.text;
-    return normalizeAiResponse(parseAiJson(rawText), userMessage);
+    return parse(rawText);
 }
 
 // Tenta o mesmo modelo algumas vezes: JSON malformado tenta na hora, 503/429 espera e tenta de novo
-async function callWithRetry(model, maxAttempts, contents, systemInstruction, userMessage) {
+async function callWithRetry(model, maxAttempts, contents, systemInstruction, temperature, parse) {
     let lastError = null;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
-            return await callModel(model, contents, systemInstruction, userMessage);
+            return await callModel(model, contents, systemInstruction, temperature, parse);
         } catch (error) {
             lastError = error;
             const retryable = error.isFormatError || isTransientError(error);
@@ -77,22 +79,15 @@ async function callWithRetry(model, maxAttempts, contents, systemInstruction, us
     throw lastError;
 }
 
-async function getGeminiChatCompletion(userMessage, context = {}) {
-    // Histórico real com papéis user/model + a mensagem atual como último turno
-    const contents = buildTurns(context.history, userMessage).map(turn => ({
-        role: turn.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: turn.content }]
-    }));
-    const systemInstruction = buildSystemInstruction(context);
-
+// Modelo principal com retry; se continuar sobrecarregado, tenta o modelo reserva
+async function runWithFallback(contents, systemInstruction, temperature, parse) {
     try {
-        return await callWithRetry(MODEL, MAX_ATTEMPTS_PRIMARY, contents, systemInstruction, userMessage);
+        return await callWithRetry(MODEL, MAX_ATTEMPTS_PRIMARY, contents, systemInstruction, temperature, parse);
     } catch (primaryError) {
-        // Se o modelo principal está sobrecarregado, tenta o modelo reserva antes de desistir
         if (isTransientError(primaryError) && FALLBACK_MODEL && FALLBACK_MODEL !== MODEL) {
             console.warn(`[Gemini] ${MODEL} indisponível. Tentando o modelo reserva ${FALLBACK_MODEL}.`);
             try {
-                return await callWithRetry(FALLBACK_MODEL, MAX_ATTEMPTS_FALLBACK, contents, systemInstruction, userMessage);
+                return await callWithRetry(FALLBACK_MODEL, MAX_ATTEMPTS_FALLBACK, contents, systemInstruction, temperature, parse);
             } catch (fallbackError) {
                 console.warn(`[Gemini] Modelo reserva também falhou: ${String(fallbackError.message).slice(0, 120)}`);
             }
@@ -101,4 +96,32 @@ async function getGeminiChatCompletion(userMessage, context = {}) {
     }
 }
 
-module.exports = { getGeminiChatCompletion, isTransientError };
+// ---------- Chat livre ----------
+async function getGeminiChatCompletion(userMessage, context = {}) {
+    // Histórico real com papéis user/model + a mensagem atual como último turno
+    const contents = buildTurns(context.history, userMessage).map(turn => ({
+        role: turn.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: turn.content }]
+    }));
+
+    return runWithFallback(
+        contents,
+        buildSystemInstruction(context),
+        0.9,
+        raw => normalizeAiResponse(parseAiJson(raw), userMessage)
+    );
+}
+
+// ---------- Frase rápida (português -> inglês) ----------
+async function getGeminiTranslation(text, context = {}) {
+    const contents = [{ role: 'user', parts: [{ text }] }];
+
+    return runWithFallback(
+        contents,
+        buildTranslateInstruction(context),
+        0.3,
+        raw => normalizeTranslation(parseAiJson(raw), text)
+    );
+}
+
+module.exports = { getGeminiChatCompletion, getGeminiTranslation, isTransientError };
