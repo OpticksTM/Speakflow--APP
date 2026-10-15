@@ -8,21 +8,13 @@ const MAX_HISTORY_MESSAGES = 20; // limita o histórico enviado à IA
 const PERSONAS = {
     friendly: "You are Alex, a friendly and casual English-speaking friend. You're chatty, warm, and love helping your friend practice English. Keep the conversation natural and fun. Use casual language, slang when appropriate, and be encouraging.",
     teacher: "You are Ms. Sarah, a patient and experienced English teacher. You help the student improve their English. You sometimes introduce a new word and briefly explain it. You are encouraging but thorough.",
-    interviewer: "You are Mr. Johnson, a professional job interviewer. You conduct a realistic job interview in English. Ask professional questions, follow up on the candidate's answers, and occasionally give a short interview tip. Be professional but friendly.",
-    tourist: "You are Emma, a tourist visiting Brazil. You only speak English and need help with situations like directions, recommendations and ordering food. You are curious about Brazilian culture and love chatting about your travels.",
-    executive: "You are Mr. Smith, a professional business executive. You speak formal business English: polite, precise and professional. You discuss meetings, negotiations, emails, presentations and career topics, and you occasionally suggest a more professional way to phrase something.",
-    coworker: "You are David, an English-speaking coworker. You talk about work projects, meetings, office situations and casual workplace chat. Use professional but friendly English, including common business expressions."
+    executive: "You are Mr. Smith, a professional business executive. You speak formal business English: polite, precise and professional. You discuss meetings, negotiations, emails, presentations and career topics, and you occasionally suggest a more professional way to phrase something."
 };
 
 const TOPICS = {
-    daily: "everyday conversations like greeting neighbors, talking about the weather, making small talk",
-    travel: "travel situations like asking for directions, booking hotels, being at the airport",
-    work: "workplace conversations like meetings, presentations, talking to colleagues",
-    restaurant: "restaurant situations like ordering food, asking for the check, making reservations",
-    shopping: "shopping situations like asking prices, trying on clothes, returning items",
-    health: "health situations like visiting a doctor, describing symptoms, being at a pharmacy",
-    tech: "technology discussions like explaining a problem to IT support, discussing gadgets",
-    friendship: "social conversations like making plans with friends, discussing hobbies, casual chat"
+    daily: "everyday conversations like greeting neighbors, talking about the weather, making small talk, hobbies and daily routines",
+    travel: "travel situations like asking for directions, booking hotels, being at the airport, ordering at restaurants and sightseeing",
+    work: "workplace conversations like meetings, presentations, talking to colleagues, emails and career topics"
 };
 
 const LEVELS = {
@@ -39,29 +31,21 @@ function norm(value) {
         .trim();
 }
 
-// Aceita tanto os ids (teacher) quanto os rótulos do menu ("Sarah Professora")
+// Aceita tanto os ids (teacher) quanto os valores/rótulos do menu ("sarah", "Sarah (Professora)", "mr_smith")
 function resolvePersona(value) {
     const s = norm(value);
     if (PERSONAS[s]) return s;
     if (/sarah|teacher|professor/.test(s)) return 'teacher';
     if (/smith|executiv|business|negocio/.test(s)) return 'executive';
-    if (/johnson|interview|entrevist/.test(s)) return 'interviewer';
-    if (/emma|tourist|turista/.test(s)) return 'tourist';
-    if (/david|cowork|colega/.test(s)) return 'coworker';
-    return 'friendly'; // alex / amigo / friend / padrão
+    return 'friendly'; // alex / amigo / padrão
 }
 
 function resolveTopic(value) {
     const s = norm(value);
     if (TOPICS[s]) return s;
-    if (/viag|travel|trip/.test(s)) return 'travel';
+    if (/viag|travel|trip|turis/.test(s)) return 'travel';
     if (/trabalh|work|negoc|carreira/.test(s)) return 'work';
-    if (/restaur|comida|food/.test(s)) return 'restaurant';
-    if (/compra|shop/.test(s)) return 'shopping';
-    if (/saude|health/.test(s)) return 'health';
-    if (/tecnolog|tech/.test(s)) return 'tech';
-    if (/social|amig|friend/.test(s)) return 'friendship';
-    return 'daily'; // dia a dia / daily / padrão
+    return 'daily'; // diário / dia a dia / padrão
 }
 
 function resolveLevel(value) {

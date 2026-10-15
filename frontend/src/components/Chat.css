@@ -1,0 +1,322 @@
+/* frontend/src/components/Chat.css */
+
+/* Contentor Principal do Chat */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 850px;
+    height: 90vh;
+    margin: 0 auto;
+    background-color: #111827;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border: 1px solid #1f2937;
+    overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #f3f4f6;
+}
+
+/* Cabeçalho */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background-color: #1f2937;
+    border-bottom: 1px solid #374151;
+}
+
+.header-info h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.header-badge {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.75rem;
+    color: #d97706;
+    background-color: rgba(217, 119, 6, 0.15);
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: capitalize;
+}
+
+.exit-btn {
+    background-color: transparent;
+    border: 1px solid #4b5563;
+    color: #d1d5db;
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.exit-btn:hover {
+    background-color: #374151;
+    color: #ffffff;
+}
+
+/* Área de Mensagens */
+.chat-messages {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.message-row {
+    display: flex;
+    width: 100%;
+}
+
+.message-row.user {
+    justify-content: flex-end;
+}
+
+.message-row.ai {
+    justify-content: flex-start;
+}
+
+/* Balões de Mensagem */
+.message-bubble {
+    max-width: 70%;
+    padding: 14px 18px;
+    border-radius: 16px;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.message-bubble.user {
+    background-color: #064e3b;
+    border: 1px solid #047857;
+    color: #ecfdf5;
+    border-bottom-right-radius: 4px;
+}
+
+.message-bubble.ai {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    color: #f8fafc;
+    border-bottom-left-radius: 4px;
+}
+
+.message-bubble.thinking {
+    opacity: 0.7;
+    font-style: italic;
+}
+
+/* Texto Principal */
+.message-text {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.action-row {
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+/* Caixa de Tradução em Itálico */
+.translation-box {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.message-translation {
+    font-style: italic;
+    font-size: 0.88rem;
+    color: #d1d5db;
+    opacity: 0.88;
+    margin: 0 0 6px 0;
+    line-height: 1.4;
+}
+
+/* Botões de Áudio (Ouvir e Ouvir Tradução) */
+.listen-btn {
+    background-color: transparent;
+    border: 1px solid rgba(76, 209, 55, 0.4);
+    color: #4cd137;
+    border-radius: 12px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.listen-btn:hover {
+    background-color: rgba(76, 209, 55, 0.15);
+    border-color: #4cd137;
+}
+
+.listen-btn.secondary {
+    border-color: rgba(96, 165, 250, 0.4);
+    color: #60a5fa;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+}
+
+.listen-btn.secondary:hover {
+    background-color: rgba(96, 165, 250, 0.15);
+    border-color: #60a5fa;
+}
+
+/* Status do Microfone */
+.speech-status {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #10b981;
+    padding: 6px;
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+/* Painel de Sugestões Rápidas */
+.suggestions-container {
+    padding: 12px 24px;
+    background-color: #172554;
+    border-top: 1px solid #1e3a8a;
+    border-bottom: 1px solid #1e3a8a;
+}
+
+.suggestions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #93c5fd;
+    margin-bottom: 8px;
+}
+
+.toggle-suggestions-btn {
+    background: none;
+    border: none;
+    color: #60a5fa;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.suggestions-list {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.suggestion-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #1e3a8a;
+    border: 1px solid #3b82f6;
+    border-radius: 12px;
+    padding: 8px 14px;
+    cursor: pointer;
+    min-width: 220px;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.suggestion-card:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+}
+
+.suggestion-en {
+    font-size: 0.88rem;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.suggestion-pt {
+    font-size: 0.78rem;
+    color: #bfdbfe;
+    font-style: italic;
+    margin-top: 2px;
+}
+
+/* Controlos Inferiores (Teclado e Microfone) */
+.chat-controls {
+    display: flex;
+    gap: 12px;
+    padding: 16px 24px;
+    background-color: #1f2937;
+    align-items: center;
+}
+
+.mic-btn {
+    background-color: #10b981;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
+}
+
+.mic-btn:hover {
+    background-color: #059669;
+}
+
+.mic-btn.recording {
+    background-color: #ef4444;
+    animation: pulse 1.5s infinite;
+}
+
+.text-input-form {
+    display: flex;
+    flex: 1;
+    gap: 8px;
+}
+
+.text-input-form input {
+    flex: 1;
+    background-color: #374151;
+    border: 1px solid #4b5563;
+    border-radius: 20px;
+    padding: 10px 16px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.text-input-form input:focus {
+    border-color: #3b82f6;
+}
+
+.text-input-form button {
+    background-color: #3b82f6;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.text-input-form button:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.text-input-form button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
